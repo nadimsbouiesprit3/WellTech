@@ -1,0 +1,8 @@
+controllers:
+    resource: ../src/Controller/
+    type: attribute
+
+    # config/routes.yaml
+consultation_index:
+    path: /consultation
+    controller: App\Controller\ConsultationController::index
