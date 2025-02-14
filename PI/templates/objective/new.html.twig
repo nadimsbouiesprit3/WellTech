@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Objective{% endblock %}
+
+{% block body %}
+    <h1>Create new Objective</h1>
+
+    {{ include('objective/_form.html.twig') }}
+
+    <a href="{{ path('app_objective_index') }}">back to list</a>
+{% endblock %}

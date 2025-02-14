@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Objective{% endblock %}
+
+{% block body %}
+    <h1>Objective</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ objective.id }}</td>
+            </tr>
+            <tr>
+                <th>Title</th>
+                <td>{{ objective.title }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ objective.description }}</td>
+            </tr>
+            <tr>
+                <th>Points_required</th>
+                <td>{{ objective.pointsRequired }}</td>
+            </tr>
+            <tr>
+                <th>Created_at</th>
+                <td>{{ objective.createdAt ? objective.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Updated_at</th>
+                <td>{{ objective.updatedAt ? objective.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_objective_index') }}">back to list</a>
+
+    <a href="{{ path('app_objective_edit', {'id': objective.id}) }}">edit</a>
+
+    {{ include('objective/_delete_form.html.twig') }}
+{% endblock %}

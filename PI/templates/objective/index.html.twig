@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Objective index{% endblock %}
+
+{% block body %}
+    <h1>Objective index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Points_required</th>
+                <th>Created_at</th>
+                <th>Updated_at</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for objective in objectives %}
+            <tr>
+                <td>{{ objective.id }}</td>
+                <td>{{ objective.title }}</td>
+                <td>{{ objective.description }}</td>
+                <td>{{ objective.pointsRequired }}</td>
+                <td>{{ objective.createdAt ? objective.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ objective.updatedAt ? objective.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_objective_show', {'id': objective.id}) }}">show</a>
+                    <a href="{{ path('app_objective_edit', {'id': objective.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_objective_new') }}">Create new</a>
+{% endblock %}
