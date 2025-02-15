@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Consultation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Entity\User;    
 
 /**
  * @extends ServiceEntityRepository<Consultation>
@@ -45,4 +46,28 @@ class ConsultationRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+public function getPendingConsultationsForPsychiatrist(User $psychiatrist)
+{
+    return $this->createQueryBuilder('c')
+        ->where('c.psychiatrist = :psychiatrist')
+        ->andWhere('c.statut = :statut')
+        ->setParameter('psychiatrist', $psychiatrist)
+        ->setParameter('statut', 'pending')
+        ->orderBy('c.createdAt', 'DESC') 
+        ->getQuery()
+        ->getResult();
+}
+
+public function getConsultationsByStatus(User $psychiatrist, string $status)
+{
+    return $this->createQueryBuilder('c')
+        ->where('c.psychiatrist = :psychiatrist')
+        ->andWhere('c.statut = :statut')
+        ->setParameter('psychiatrist', $psychiatrist)
+        ->setParameter('statut', $status)
+        ->orderBy('c.createdAt', 'DESC')
+        ->getQuery()
+        ->getResult();
+}
+
 }

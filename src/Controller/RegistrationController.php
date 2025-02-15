@@ -17,8 +17,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
-use Doctrine\Common\Collections\ArrayCollection; // Add this line
-use Doctrine\Common\Collections\Collection; // Add this line if you're using Collection
+use Doctrine\Common\Collections\ArrayCollection; 
+use Doctrine\Common\Collections\Collection; 
 use Doctrine\ORM\Mapping as ORM;
 
 class RegistrationController extends AbstractController
@@ -45,6 +45,10 @@ class RegistrationController extends AbstractController
                     $form->get('plainPassword')->getData()
                 )
             );
+
+            if (!$user->getRoles()) {
+                $user->setRoles(['ROLE_USER']);
+            }
 
             $entityManager->persist($user);
             $entityManager->flush();
@@ -86,6 +90,7 @@ class RegistrationController extends AbstractController
         }
 
         // @TODO Change the redirect on success and handle or remove the flash message in your templates
+        
         $this->addFlash('success', 'Your email address has been verified.');
 
         return $this->redirectToRoute('app_register');

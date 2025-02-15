@@ -4,8 +4,10 @@ namespace App\Entity;
 use App\Repository\ConsultationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ConsultationRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Consultation
 {
     #[ORM\Id]
@@ -24,6 +26,28 @@ class Consultation
 
     #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $createdAt = null;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[Assert\NotBlank(message: 'Please select a consultation date.')]
+    private ?\DateTimeInterface $consultationDate = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\NotBlank(message: 'Please enter a message.')]
+    private ?string $message = null;
+
+    #[ORM\Column(type: 'string', length: 20)]
+    private string $statut = 'pending';
+
+    public function getStatut(): string
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(string $statut): self
+    {
+        $this->statut = $statut;
+        return $this;
+    }
 
     public function getPatient(): ?User
     {
@@ -49,19 +73,42 @@ public function setPsychiatrist(?User $psychiatrist): self
     return $this;
 }
 
+public function setCreatedAt(?\DateTimeInterface $createdAt): self
+{
+    $this->createdAt = $createdAt;
+    return $this;
+}
+
+
 public function getCreatedAt(): ?\DateTimeInterface
 {
     return $this->createdAt;
 }
 
-public function setCreatedAt(\DateTimeInterface $createdAt): self
+public function getConsultationDate(): ?\DateTimeInterface
 {
-    $this->createdAt = $createdAt;
+    return $this->consultationDate;
+}
 
+public function setConsultationDate(\DateTimeInterface $consultationDate): self
+{
+    $this->consultationDate = $consultationDate;
     return $this;
 }
 public function getId(): ?int
 {
     return $this->id;
 }
+
+public function getMessage(): ?string
+{
+    return $this->message;
+}
+
+public function setMessage(?string $message): self
+{
+    $this->message = $message;
+    return $this;
+}
+
 }

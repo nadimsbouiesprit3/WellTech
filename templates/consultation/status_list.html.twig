@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ status }} Consultations{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">{{ status }} Consultations</h1>
+
+    {% if consultations is empty %}
+        <p class="text-center">No {{ status | lower }} consultations found.</p>
+    {% else %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Consultation Date</th>
+                    <th>Created At</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for consultation in consultations %}
+                    <tr>
+                        <td>{{ consultation.patient.email ?? 'No patient' }}</td>
+                        <td>{{ consultation.consultationDate ? consultation.consultationDate|date('Y-m-d H:i') : 'No date' }}</td>
+                        <td>{{ consultation.createdAt ? consultation.createdAt|date('Y-m-d H:i') : 'No date' }}</td>
+                        <td><span class="badge {% if status == 'Accepted' %}bg-success{% else %}bg-danger{% endif %}">{{ status }}</span></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+{% endblock %}

@@ -67,11 +67,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
+        $roles = $this->roles ?? [];
+    
+        if (!in_array('ROLE_USER', $roles, true)) {
+            $roles[] = 'ROLE_USER';
+        }
+    
+        return $roles;
     }
 
     public function setRoles(array $roles): static
@@ -123,6 +125,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->consultations = new ArrayCollection();
+        $this->roles = ['ROLE_USER'];
     }
 
     public function getConsultations(): Collection
