@@ -1,0 +1,46 @@
+{% extends 'back/base.html.twig' %}
+
+{% block title %}Modifier l'Article{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="form-container">
+        <h1><i class="fas fa-edit"></i> Modifier l'Article</h1>
+
+        {{ form_start(form) }}
+            <div class="form-group">
+                <label for="title"><i class="fas fa-heading"></i> Titre</label>
+                {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+            </div>
+
+            <div class="form-group">
+                <label for="content"><i class="fas fa-align-left"></i> Contenu</label>
+                {{ form_widget(form.content, {'attr': {'class': 'form-control'}}) }}
+            </div>
+
+            <div class="form-group">
+                <label for="media"><i class="fas fa-image"></i> Média</label>
+                {{ form_widget(form.media, {'attr': {'class': 'form-control'}}) }}
+            </div>
+
+            <div class="form-group">
+                <label for="type"><i class="fas fa-tag"></i> Type</label>
+                {{ form_widget(form.type, {'attr': {'class': 'form-control'}}) }}
+            </div>
+
+            <div class="form-group">
+                <label for="tags"><i class="fas fa-tags"></i> Tags</label>
+                {{ form_widget(form.tags, {'attr': {'class': 'form-control'}}) }}
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-3">
+                <i class="fas fa-save"></i> Mettre à jour
+            </button>
+        {{ form_end(form) }}
+
+        <a href="{{ path('app_article_index') }}" class="btn btn-secondary mt-3">
+            <i class="fas fa-arrow-left"></i> Retour à la liste
+        </a>
+    </div>
+</div>
+{% endblock %}

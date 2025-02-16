@@ -1,0 +1,47 @@
+{% extends 'back/base.html.twig' %}
+
+{% block title %}Créer un article{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="mb-4">Créer un article</h1>
+
+        {{ form_start(form, {'attr': {'class': 'needs-validation'}}) }}
+        
+        <div class="mb-3">
+            {{ form_label(form.title, 'Titre', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.title) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.content, 'Contenu', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.content, {'attr': {'class': 'form-control', 'rows': 5}}) }}
+            {{ form_errors(form.content) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.media, 'Fichier Média', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.media, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.media) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.type, 'Type de Média', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.type, {'attr': {'class': 'form-select'}}) }}
+            {{ form_errors(form.type) }}
+        </div>
+
+      
+
+        <div class="mb-3">
+            {{ form_label(form.tags, 'Tags', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.tags, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.tags) }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
