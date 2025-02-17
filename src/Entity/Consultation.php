@@ -29,7 +29,7 @@ class Consultation
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     #[Assert\NotBlank(message: 'sélectionner une date de consultation.')]
-    #[Assert\GreaterThanOrEqual("aujourd'hui", message: "La date de consultation doit être aujourd'hui ou une date future.")]
+    #[Assert\GreaterThanOrEqual("today", message: "La date de consultation doit être aujourd'hui ou une date future.")]
     private ?\DateTimeInterface $consultationDate = null;
     
 

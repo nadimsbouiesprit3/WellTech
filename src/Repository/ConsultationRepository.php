@@ -52,7 +52,7 @@ public function getPendingConsultationsForPsychiatrist(User $psychiatrist)
         ->where('c.psychiatrist = :psychiatrist')
         ->andWhere('c.statut = :statut')
         ->setParameter('psychiatrist', $psychiatrist)
-        ->setParameter('statut', 'pending')
+        ->setParameter('statut', 'en attente')
         ->orderBy('c.createdAt', 'DESC') 
         ->getQuery()
         ->getResult();

@@ -135,6 +135,66 @@ public function viewConsultationsByStatus(string $status, EntityManagerInterface
     ]);
 }
 
+#[Route('/consultation/{id}/delete', name: 'consultation_delete', methods: ['POST'])]
+public function deleteConsultation(int $id, EntityManagerInterface $entityManager, ConsultationRepository $consultationRepository, Request $request): Response
+{
+    $consultation = $consultationRepository->find($id);
+
+    if (!$consultation) {
+        throw $this->createNotFoundException('Consultation not found.');
+    }
+
+    if ($this->getUser() !== $consultation->getPatient()) {
+        throw $this->createAccessDeniedException('You are not allowed to delete this consultation.');
+    }
+
+    if ($this->isCsrfTokenValid('delete' . $consultation->getId(), $request->request->get('_token'))) {
+        $entityManager->remove($consultation);
+        $entityManager->flush();
+        
+        $this->addFlash('success', 'Consultation deleted successfully.');
+    }
+
+    return $this->redirectToRoute('index_consultation');
+}
+
+#[Route('/consultation/{id}/edit', name: 'consultation_edit')]
+public function editConsultation(int $id, Request $request, EntityManagerInterface $entityManager, ConsultationRepository $consultationRepository): Response
+{
+    $consultation = $consultationRepository->find($id);
+
+    if (!$consultation) {
+        throw $this->createNotFoundException('Consultation not found.');
+    }
+
+    if ($this->getUser() !== $consultation->getPatient()) {
+        throw $this->createAccessDeniedException('You are not allowed to edit this consultation.');
+    }
+
+    $form = $this->createFormBuilder($consultation)
+        ->add('consultationDate', \Symfony\Component\Form\Extension\Core\Type\DateTimeType::class, [
+            'widget' => 'single_text',
+            'html5' => true,
+            'attr' => ['class' => 'form-control'],
+            'label' => 'Nouvelle date de consultation'
+        ])
+        ->getForm();
+
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $entityManager->flush();
+        $this->addFlash('success', 'Consultation updated successfully.');
+
+        return $this->redirectToRoute('index_consultation');
+    }
+
+    return $this->render('consultation/edit.html.twig', [
+        'form' => $form->createView(),
+        'consultation' => $consultation,
+    ]);
+}
+
 
     
 }
