@@ -28,15 +28,21 @@ class Consultation
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
-    #[Assert\NotBlank(message: 'Please select a consultation date.')]
+    #[Assert\NotBlank(message: 'sélectionner une date de consultation.')]
+    #[Assert\GreaterThanOrEqual("aujourd'hui", message: "La date de consultation doit être aujourd'hui ou une date future.")]
     private ?\DateTimeInterface $consultationDate = null;
+    
 
     #[ORM\Column(type: 'text', nullable: true)]
-    #[Assert\NotBlank(message: 'Please enter a message.')]
+    #[Assert\NotBlank(message: 'Veuillez entrer un message.')]
+    #[Assert\Length(min: 10, minMessage: 'Le message doit comporter au moins 10 caractères.')]
     private ?string $message = null;
+    
 
     #[ORM\Column(type: 'string', length: 20)]
-    private string $statut = 'pending';
+    #[Assert\Choice(choices: ['en attente', 'accepté', 'refusé'], message: 'statut Invalide.')]
+    private string $statut = 'en attente';
+    
 
     public function getStatut(): string
     {

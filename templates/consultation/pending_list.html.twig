@@ -1,13 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Pending Consultations{% endblock %}
+{% block title %}Consultations en attente{% endblock %}
 
 {% block body %}
 <div class="container my-5">
-    <h1 class="text-center mb-4">Pending Consultations</h1>
+    <h1 class="text-center mb-4">Consultations en attente</h1>
+
+    <!-- ✅ Button to navigate to accepted consultations -->
+    <div class="mb-4 text-center">
+        <a href="{{ path('psychiatrist_consultations_by_status', {'status': 'accepted'}) }}" class="btn btn-success">Voir les consultations acceptées</a>
+    </div>
 
     {% if consultations is empty %}
-        <p class="text-center">No pending consultations.</p>
+        <p class="text-center">Aucune consultation en attente.</p>
     {% else %}
         <table class="table">
             <thead>
@@ -27,8 +32,8 @@
                         <td>{{ consultation.createdAt|date('Y-m-d H:i') }}</td>
                         <td>{{ consultation.statut }}</td>
                         <td>
-                            <a href="{{ path('consultation_accept', {'id': consultation.id}) }}" class="btn btn-success">Accept</a>
-                            <a href="{{ path('consultation_decline', {'id': consultation.id}) }}" class="btn btn-danger">Decline</a>
+                            <a href="{{ path('consultation_accept', {'id': consultation.id}) }}" class="btn btn-success">Accepter</a>
+                            <a href="{{ path('consultation_decline', {'id': consultation.id}) }}" class="btn btn-danger">Refuser</a>
                         </td>
                     </tr>
                 {% endfor %}

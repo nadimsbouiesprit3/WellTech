@@ -39,7 +39,7 @@ class ConsultationController extends AbstractController
             $consultation->setCreatedAt(new \DateTime()); 
 
             if (!$consultation->getConsultationDate()) {
-                throw new \Exception('Consultation date cannot be empty.');
+                throw new \Exception('La date de consultation ne peut pas être vide.');
             }
     
             $entityManager->persist($consultation);
@@ -78,7 +78,7 @@ class ConsultationController extends AbstractController
         $consultation = $consultationRepository->find($id);
     
         if (!$consultation) {
-            throw $this->createNotFoundException('Consultation not found.');
+            throw $this->createNotFoundException('Consultation introuvable.');
         }
     
         if (!$this->isGranted('ROLE_PSYCHIATRE')) {
