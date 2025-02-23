@@ -20,5 +20,21 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    session:
+        class: Symfony\Component\HttpFoundation\Session\Session
+        arguments:
+            - '@session.handler.native'
+            - '@request_stack'
+    
+    Symfony\Component\HttpFoundation\Session\SessionInterface:
+        alias: session
+
+    Symfony\Component\HttpFoundation\Session\Storage\SessionStorageInterface:
+        alias: Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage
+
+    App\Controller\ShopController:
+        tags: ['controller.service_arguments']
+        public: true
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
