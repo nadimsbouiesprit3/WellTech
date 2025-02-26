@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<title>Recompense index</title>
+
+{% block body %}
+    <h1>Recompense index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Description</th>
+                <th>Points_requis</th>
+                <th>Type</th>
+                <th>Statu</th>
+                <th>Created_at</th>
+                <th>Updated_at</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for recompense in recompenses %}
+            <tr>
+                <td>{{ recompense.id }}</td>
+                <td>{{ recompense.nom }}</td>
+                <td>{{ recompense.description }}</td>
+                <td>{{ recompense.pointsRequis }}</td>
+                <td>{{ recompense.type }}</td>
+                <td>{{ recompense.statu ? 'Yes' : 'No' }}</td>
+                <td>{{ recompense.createdAt ? recompense.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ recompense.updatedAt ? recompense.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_recompense_show', {'id': recompense.id}) }}">show</a>
+                    <a href="{{ path('app_recompense_edit', {'id': recompense.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="9">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_recompense_new') }}">Create new</a>
+{% endblock %}

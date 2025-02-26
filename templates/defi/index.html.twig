@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<title>Defi index</title>
+
+{% block body %}
+    <h1>Defi index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Titre</th>
+                <th>Description</th>
+                <th>Points</th>
+                <th>Statut</th>
+                <th>Date_debut</th>
+                <th>Date_fin</th>
+                <th>Conditions</th>
+                <th>Type</th>
+                <th>Created_at</th>
+                <th>Updated_at</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for defi in defis %}
+            <tr>
+                <td>{{ defi.id }}</td>
+                <td>{{ defi.titre }}</td>
+                <td>{{ defi.description }}</td>
+                <td>{{ defi.points }}</td>
+                <td>{{ defi.statut ? 'Yes' : 'No' }}</td>
+                <td>{{ defi.dateDebut ? defi.dateDebut|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ defi.dateFin ? defi.dateFin|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ defi.conditions ? defi.conditions|json_encode : '' }}</td>
+                <td>{{ defi.type }}</td>
+                <td>{{ defi.createdAt ? defi.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ defi.updatedAt ? defi.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_defi_show', {'id': defi.id}) }}">show</a>
+                    <a href="{{ path('app_defi_edit', {'id': defi.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="12">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_defi_new') }}">Create new</a>
+{% endblock %}

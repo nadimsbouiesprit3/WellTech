@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+
+<title>Progression index</title>
+
+{% block body %}
+    <h1>Progression index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Statut</th>
+                <th>Progression</th>
+                <th>Date_completion</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for progression in progressions %}
+            <tr>
+                <td>{{ progression.id }}</td>
+                <td>{{ progression.statut }}</td>
+                <td>{{ progression.progression }}</td>
+                <td>{{ progression.dateCompletion ? progression.dateCompletion|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_progression_show', {'id': progression.id}) }}">show</a>
+                    <a href="{{ path('app_progression_edit', {'id': progression.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_progression_new') }}">Create new</a>
+{% endblock %}

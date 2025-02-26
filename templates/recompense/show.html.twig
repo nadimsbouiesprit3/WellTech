@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<title>Recompense</title>
+
+{% block body %}
+    <h1>Recompense</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ recompense.id }}</td>
+            </tr>
+            <tr>
+                <th>Nom</th>
+                <td>{{ recompense.nom }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ recompense.description }}</td>
+            </tr>
+            <tr>
+                <th>Points_requis</th>
+                <td>{{ recompense.pointsRequis }}</td>
+            </tr>
+            <tr>
+                <th>Type</th>
+                <td>{{ recompense.type }}</td>
+            </tr>
+            <tr>
+                <th>Statu</th>
+                <td>{{ recompense.statu ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Created_at</th>
+                <td>{{ recompense.createdAt ? recompense.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Updated_at</th>
+                <td>{{ recompense.updatedAt ? recompense.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_recompense_index') }}">back to list</a>
+
+    <a href="{{ path('app_recompense_edit', {'id': recompense.id}) }}">edit</a>
+
+    {{ include('recompense/_delete_form.html.twig') }}
+{% endblock %}

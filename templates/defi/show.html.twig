@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<title>Defi</title>
+
+{% block body %}
+    <h1>Defi</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ defi.id }}</td>
+            </tr>
+            <tr>
+                <th>Titre</th>
+                <td>{{ defi.titre }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ defi.description }}</td>
+            </tr>
+            <tr>
+                <th>Points</th>
+                <td>{{ defi.points }}</td>
+            </tr>
+            <tr>
+                <th>Statut</th>
+                <td>{{ defi.statut ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Date_debut</th>
+                <td>{{ defi.dateDebut ? defi.dateDebut|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Date_fin</th>
+                <td>{{ defi.dateFin ? defi.dateFin|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Conditions</th>
+                <td>{{ defi.conditions ? defi.conditions|json_encode : '' }}</td>
+            </tr>
+            <tr>
+                <th>Type</th>
+                <td>{{ defi.type }}</td>
+            </tr>
+            <tr>
+                <th>Created_at</th>
+                <td>{{ defi.createdAt ? defi.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Updated_at</th>
+                <td>{{ defi.updatedAt ? defi.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_defi_index') }}">back to list</a>
+
+    <a href="{{ path('app_defi_edit', {'id': defi.id}) }}">edit</a>
+
+    {{ include('defi/_delete_form.html.twig') }}
+{% endblock %}

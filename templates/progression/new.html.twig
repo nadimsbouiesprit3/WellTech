@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+
+<title>New Progression</title>
+
+{% block body %}
+    <h1>Create new Progression</h1>
+
+    {{ include('progression/_form.html.twig') }}
+
+    <a href="{{ path('app_progression_index') }}">back to list</a>
+{% endblock %}
