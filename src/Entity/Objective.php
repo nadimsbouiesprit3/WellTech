@@ -33,6 +33,9 @@ class Objective
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $updatedAt = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'objectives')]
+    private ?User $user = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTime(); // Automatically set the creation date
@@ -100,6 +103,18 @@ class Objective
     public function setUpdatedAt(\DateTimeInterface $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

@@ -25,9 +25,9 @@ class ObjectiveRepository extends ServiceEntityRepository
     public function findObjectivesWithMinimumPoints(int $points): array
     {
         return $this->createQueryBuilder('o')
-            ->andWhere('o.points >= :points')
+            ->andWhere('o.pointsRequired >= :points')
             ->setParameter('points', $points)
-            ->orderBy('o.points', 'DESC')
+            ->orderBy('o.pointsRequired', 'DESC')
             ->getQuery()
             ->getResult();
     }
@@ -75,7 +75,7 @@ class ObjectiveRepository extends ServiceEntityRepository
     public function findTopObjectives(int $limit = 10): array
     {
         return $this->createQueryBuilder('o')
-            ->orderBy('o.points', 'DESC')
+            ->orderBy('o.pointsRequired', 'DESC')
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();

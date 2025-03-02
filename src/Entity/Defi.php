@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: DefiRepository::class)]
 class Defi
@@ -17,12 +18,15 @@ class Defi
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le titre ne peut pas être vide.")]
     private ?string $titre = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank(message: "La description ne peut pas être vide.")]
     private ?string $description = null;
 
     #[ORM\Column]
+    #[Assert\PositiveOrZero(message: "Les points doivent être positifs ou zéro.")]
     private ?int $points = null;
 
     #[ORM\Column]
@@ -38,6 +42,7 @@ class Defi
     private array $conditions = [];
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le type ne peut pas être vide.")]
     private ?string $type = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]

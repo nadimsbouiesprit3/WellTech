@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ProgressionRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProgressionRepository::class)]
 class Progression
@@ -23,9 +24,11 @@ class Progression
     private ?Defi $defi = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "The status cannot be empty.")]
     private ?string $statut = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\PositiveOrZero(message: "The progression must be a positive number or zero.")]
     private ?int $progression = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
