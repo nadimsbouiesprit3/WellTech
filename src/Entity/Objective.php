@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ObjectiveRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ObjectiveRepository::class)]
 class Objective
@@ -15,19 +16,28 @@ class Objective
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "The title cannot be empty.")]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank(message: "The description cannot be empty.")]
     private ?string $description = null;
 
     #[ORM\Column]
-    private ?int $pointsrequired = null;
+    #[Assert\PositiveOrZero(message: "The points required must be positive or zero.")]
+    private ?int $pointsRequired = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $updatedAt = null;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime(); // Automatically set the creation date
+        $this->updatedAt = new \DateTime(); // Automatically set the update date
+    }
 
     public function getId(): ?int
     {
@@ -58,14 +68,14 @@ class Objective
         return $this;
     }
 
-    public function getPointsrequired(): ?int
+    public function getPointsRequired(): ?int
     {
-        return $this->pointsrequired;
+        return $this->pointsRequired;
     }
 
-    public function setPointsrequired(int $pointsrequired): static
+    public function setPointsRequired(int $pointsRequired): static
     {
-        $this->pointsrequired = $pointsrequired;
+        $this->pointsRequired = $pointsRequired;
 
         return $this;
     }
@@ -92,5 +102,16 @@ class Objective
         $this->updatedAt = $updatedAt;
 
         return $this;
+    }
+
+    // Automatically update the `updatedAt` timestamp before persisting or updating the entity
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function updateTimestamps(): void
+    {
+        $this->updatedAt = new \DateTime();
+        if ($this->createdAt === null) {
+            $this->createdAt = new \DateTime();
+        }
     }
 }

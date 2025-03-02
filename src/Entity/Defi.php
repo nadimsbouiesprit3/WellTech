@@ -34,7 +34,7 @@ class Defi
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $date_fin = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: Types::JSON)]
     private array $conditions = [];
 
     #[ORM\Column(length: 255)]
@@ -55,6 +55,8 @@ class Defi
     public function __construct()
     {
         $this->progressions = new ArrayCollection();
+        $this->created_at = new \DateTime(); // Automatically set the creation date
+        $this->updated_at = new \DateTime(); // Automatically set the update date
     }
 
     public function getId(): ?int
@@ -203,12 +205,23 @@ class Defi
     public function removeProgression(Progression $progression): static
     {
         if ($this->progressions->removeElement($progression)) {
-            // set the owning side to null (unless already changed)
+            // Set the owning side to null (unless already changed)
             if ($progression->getDefi() === $this) {
                 $progression->setDefi(null);
             }
         }
 
         return $this;
+    }
+
+    // Automatically update the `updated_at` timestamp before persisting or updating the entity
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function updateTimestamps(): void
+    {
+        $this->updated_at = new \DateTime();
+        if ($this->created_at === null) {
+            $this->created_at = new \DateTime();
+        }
     }
 }

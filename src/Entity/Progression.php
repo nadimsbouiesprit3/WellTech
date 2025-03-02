@@ -16,11 +16,11 @@ class Progression
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'progressions')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null; // Corrected property name and type
+    private ?User $user = null;
 
     #[ORM\ManyToOne(targetEntity: Defi::class, inversedBy: 'progressions')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Defi $defi = null; // Corrected property name
+    private ?Defi $defi = null;
 
     #[ORM\Column(length: 255)]
     private ?string $statut = null;
@@ -69,6 +69,11 @@ class Progression
     {
         $this->statut = $statut;
 
+        // Automatically set the completion date if the status is "completed"
+        if ($statut === 'completed' && $this->date_completion === null) {
+            $this->date_completion = new \DateTime();
+        }
+
         return $this;
     }
 
@@ -94,5 +99,14 @@ class Progression
         $this->date_completion = $date_completion;
 
         return $this;
+    }
+
+    // Automatically update the completion date when the status changes to "completed"
+    #[ORM\PreUpdate]
+    public function updateCompletionDate(): void
+    {
+        if ($this->statut === 'completed' && $this->date_completion === null) {
+            $this->date_completion = new \DateTime();
+        }
     }
 }

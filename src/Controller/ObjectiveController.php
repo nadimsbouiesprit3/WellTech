@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/objective')]
 final class ObjectiveController extends AbstractController
@@ -23,6 +24,7 @@ final class ObjectiveController extends AbstractController
     }
 
     #[Route('/new', name: 'app_objective_new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')] // Restrict access to admins
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $objective = new Objective();
@@ -32,6 +34,9 @@ final class ObjectiveController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($objective);
             $entityManager->flush();
+
+            // Add a flash message
+            $this->addFlash('success', 'Objective created successfully.');
 
             return $this->redirectToRoute('app_objective_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -51,6 +56,7 @@ final class ObjectiveController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_objective_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')] // Restrict access to admins
     public function edit(Request $request, Objective $objective, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(ObjectiveType::class, $objective);
@@ -58,6 +64,9 @@ final class ObjectiveController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
+
+            // Add a flash message
+            $this->addFlash('success', 'Objective updated successfully.');
 
             return $this->redirectToRoute('app_objective_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -69,11 +78,18 @@ final class ObjectiveController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_objective_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')] // Restrict access to admins
     public function delete(Request $request, Objective $objective, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$objective->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($objective);
             $entityManager->flush();
+
+            // Add a flash message
+            $this->addFlash('success', 'Objective deleted successfully.');
+        } else {
+            // Add a flash message for invalid CSRF token
+            $this->addFlash('error', 'Invalid CSRF token.');
         }
 
         return $this->redirectToRoute('app_objective_index', [], Response::HTTP_SEE_OTHER);

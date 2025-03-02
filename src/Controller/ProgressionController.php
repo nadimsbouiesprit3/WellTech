@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/progression')]
 final class ProgressionController extends AbstractController
@@ -23,6 +24,7 @@ final class ProgressionController extends AbstractController
     }
 
     #[Route('/new', name: 'app_progression_new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')] // Restrict access to admins
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $progression = new Progression();
@@ -32,6 +34,9 @@ final class ProgressionController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($progression);
             $entityManager->flush();
+
+            // Add a flash message
+            $this->addFlash('success', 'Progression created successfully.');
 
             return $this->redirectToRoute('app_progression_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -51,6 +56,7 @@ final class ProgressionController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_progression_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')] // Restrict access to admins
     public function edit(Request $request, Progression $progression, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(ProgressionType::class, $progression);
@@ -58,6 +64,9 @@ final class ProgressionController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
+
+            // Add a flash message
+            $this->addFlash('success', 'Progression updated successfully.');
 
             return $this->redirectToRoute('app_progression_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -69,11 +78,18 @@ final class ProgressionController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_progression_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')] // Restrict access to admins
     public function delete(Request $request, Progression $progression, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$progression->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($progression);
             $entityManager->flush();
+
+            // Add a flash message
+            $this->addFlash('success', 'Progression deleted successfully.');
+        } else {
+            // Add a flash message for invalid CSRF token
+            $this->addFlash('error', 'Invalid CSRF token.');
         }
 
         return $this->redirectToRoute('app_progression_index', [], Response::HTTP_SEE_OTHER);

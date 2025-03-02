@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/defi')]
 final class DefiController extends AbstractController
@@ -23,6 +24,7 @@ final class DefiController extends AbstractController
     }
 
     #[Route('/new', name: 'app_defi_new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')] // Restrict access to admins
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $defi = new Defi();
@@ -32,6 +34,9 @@ final class DefiController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($defi);
             $entityManager->flush();
+
+            // Add a flash message
+            $this->addFlash('success', 'Defi created successfully.');
 
             return $this->redirectToRoute('app_defi_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -51,6 +56,7 @@ final class DefiController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_defi_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')] // Restrict access to admins
     public function edit(Request $request, Defi $defi, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(DefiType::class, $defi);
@@ -58,6 +64,9 @@ final class DefiController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
+
+            // Add a flash message
+            $this->addFlash('success', 'Defi updated successfully.');
 
             return $this->redirectToRoute('app_defi_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -69,11 +78,18 @@ final class DefiController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_defi_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')] // Restrict access to admins
     public function delete(Request $request, Defi $defi, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$defi->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($defi);
             $entityManager->flush();
+
+            // Add a flash message
+            $this->addFlash('success', 'Defi deleted successfully.');
+        } else {
+            // Add a flash message for invalid CSRF token
+            $this->addFlash('error', 'Invalid CSRF token.');
         }
 
         return $this->redirectToRoute('app_defi_index', [], Response::HTTP_SEE_OTHER);

@@ -39,7 +39,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Progression>
      */
-    #[ORM\OneToMany(targetEntity: Progression::class, mappedBy: 'user_id')]
+    #[ORM\OneToMany(targetEntity: Progression::class, mappedBy: 'user')]
     private Collection $progressions;
 
     public function __construct()
@@ -82,8 +82,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = '';
+        // Guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
     }
@@ -101,7 +101,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see PasswordAuthenticatedUserInterface
      */
-    public function getPassword(): ?string
+    public function getPassword(): string
     {
         return $this->password;
     }
@@ -134,7 +134,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->progressions->contains($progression)) {
             $this->progressions->add($progression);
-            $progression->setUserId($this);
+            $progression->setUser($this);
         }
 
         return $this;
@@ -143,9 +143,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeProgression(Progression $progression): static
     {
         if ($this->progressions->removeElement($progression)) {
-            // set the owning side to null (unless already changed)
-            if ($progression->getUserId() === $this) {
-                $progression->setUserId(null);
+            // Set the owning side to null (unless already changed)
+            if ($progression->getUser() === $this) {
+                $progression->setUser(null);
             }
         }
 

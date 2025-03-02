@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\RecompenseRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: RecompenseRepository::class)]
 class Recompense
@@ -15,15 +16,19 @@ class Recompense
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le nom ne peut pas être vide.")]
     private ?string $nom = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank(message: "La description ne peut pas être vide.")]
     private ?string $description = null;
 
     #[ORM\Column]
+    #[Assert\PositiveOrZero(message: "Les points requis doivent être positifs ou zéro.")]
     private ?int $points_requis = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le type ne peut pas être vide.")]
     private ?string $type = null;
 
     #[ORM\Column]
@@ -34,6 +39,12 @@ class Recompense
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $updated_at = null;
+
+    public function __construct()
+    {
+        $this->created_at = new \DateTime(); // Automatically set the creation date
+        $this->updated_at = new \DateTime(); // Automatically set the update date
+    }
 
     public function getId(): ?int
     {
@@ -122,5 +133,16 @@ class Recompense
         $this->updated_at = $updated_at;
 
         return $this;
+    }
+
+    // Automatically update the `updated_at` timestamp before persisting or updating the entity
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function updateTimestamps(): void
+    {
+        $this->updated_at = new \DateTime();
+        if ($this->created_at === null) {
+            $this->created_at = new \DateTime();
+        }
     }
 }

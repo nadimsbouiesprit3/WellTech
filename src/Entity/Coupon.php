@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\CouponRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CouponRepository::class)]
 class Coupon
@@ -15,9 +16,13 @@ class Coupon
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank(message: "The coupon code cannot be empty.")]
+    #[Assert\Length(max: 50, maxMessage: "The coupon code cannot be longer than {{ limit }} characters.")]
     private ?string $code = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank(message: "The discount cannot be empty.")]
+    #[Assert\Range(min: 0, max: 100, notInRangeMessage: "The discount must be between {{ min }}% and {{ max }}%.")]
     private ?float $discount = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
@@ -31,6 +36,13 @@ class Coupon
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $updatedAt = null;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime(); // Automatically set the creation date
+        $this->updatedAt = new \DateTime(); // Automatically set the update date
+        $this->isActive = true; // Default to active
+    }
 
     public function getId(): ?int
     {
@@ -107,5 +119,26 @@ class Coupon
         $this->updatedAt = $updatedAt;
 
         return $this;
+    }
+
+    // Automatically update the `updatedAt` timestamp before persisting or updating the entity
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function updateTimestamps(): void
+    {
+        $this->updatedAt = new \DateTime();
+        if ($this->createdAt === null) {
+            $this->createdAt = new \DateTime();
+        }
+    }
+
+    // Check if the coupon is expired
+    public function isExpired(): bool
+    {
+        if ($this->expiresAt === null) {
+            return false; // Coupon never expires
+        }
+
+        return $this->expiresAt < new \DateTime();
     }
 }

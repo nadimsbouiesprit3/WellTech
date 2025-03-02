@@ -16,28 +16,67 @@ class CouponRepository extends ServiceEntityRepository
         parent::__construct($registry, Coupon::class);
     }
 
-    //    /**
-    //     * @return Coupon[] Returns an array of Coupon objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('c.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Find all active coupons.
+     *
+     * @return Coupon[]
+     */
+    public function findActiveCoupons(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.isActive = :isActive')
+            ->setParameter('isActive', true)
+            ->orderBy('c.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?Coupon
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * Find coupons with a discount within a specified range.
+     *
+     * @param float $minDiscount The minimum discount.
+     * @param float $maxDiscount The maximum discount.
+     * @return Coupon[]
+     */
+    public function findByDiscountRange(float $minDiscount, float $maxDiscount): array
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.discount BETWEEN :minDiscount AND :maxDiscount')
+            ->setParameter('minDiscount', $minDiscount)
+            ->setParameter('maxDiscount', $maxDiscount)
+            ->orderBy('c.discount', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Find coupons that expire after a specific date.
+     *
+     * @param \DateTimeInterface $expiresAfter The expiration date.
+     * @return Coupon[]
+     */
+    public function findCouponsExpiringAfter(\DateTimeInterface $expiresAfter): array
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.expiresAt > :expiresAfter')
+            ->setParameter('expiresAfter', $expiresAfter)
+            ->orderBy('c.expiresAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Find a coupon by its code.
+     *
+     * @param string $code The coupon code.
+     * @return Coupon|null
+     */
+    public function findOneByCode(string $code): ?Coupon
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.code = :code')
+            ->setParameter('code', $code)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }
