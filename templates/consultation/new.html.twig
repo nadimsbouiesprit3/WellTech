@@ -1,26 +1,27 @@
-{% extends 'base.html.twig' %}
+{% extends 'front/base.html.twig' %}
 
 {% block title %}New Consultation{% endblock %}
-{%block header%}
-        <nav class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
-            <div class="container">
-                <a class="navbar-brand" href="#page-top">Start Bootstrap</a>
-                <button class="navbar-toggler text-uppercase font-weight-bold bg-primary text-white rounded" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-                    Menu
-                    <i class="fas fa-bars"></i>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarResponsive">
-                    <ul class="navbar-nav ms-auto">
-                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/add_consultation">Rendez-Vous</a></li>
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/consultation">Consultation</a></li>
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#contact">Contact</a></li>
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/login">Log In</a></li>
-                    </ul>
-                </div>
+
+{% block header %}
+    <nav class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand" href="#page-top">Start Bootstrap</a>
+            <button class="navbar-toggler text-uppercase font-weight-bold bg-primary text-white rounded" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                Menu
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/add_consultation">Rendez-Vous</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/consultation">Consultation</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/login">Log In</a></li>
+                </ul>
             </div>
-        </nav>
-        <br><br><br><br><br><br>
-{%endblock%}
+        </div>
+    </nav>
+    <br><br><br><br><br><br>
+{% endblock %}
 
 {% block body %}
 <div class="container my-5">
@@ -31,10 +32,11 @@
             {{ form_label(form.psychiatrist, 'Psychiatrist', {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(form.psychiatrist, {'attr': {'class': 'form-control'}}) }}
         </div>
-        <div class="mb-3">
-            {{ form_label(form.consultationDate, 'Consultation Date and Time', {'label_attr': {'class': 'form-label'}}) }}
-            {{ form_widget(form.consultationDate, {'attr': {'class': 'form-control'}}) }}
-        </div>
+
+        <div id="calendar-container" class="calendar-container"></div>
+        <input type="hidden" id="consultation-date" name="consultationDate">
+        <p id="selected-date-label" class="mt-2"></p>
+
         <div class="mb-3">
             {{ form_label(form.message, 'Message to the Psychiatrist', {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(form.message, {'attr': {'class': 'form-control', 'rows': 4, 'placeholder': 'Write your message here...'}}) }}
@@ -43,4 +45,121 @@
     {{ form_end(form) }}
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const calendarContainer = document.getElementById('calendar-container');
+        const consultationDateInput = document.getElementById('consultation-date');
+        const selectedDateLabel = document.getElementById('selected-date-label');
+
+        const date = new Date();
+        let selectedDate = null;
+
+        const renderCalendar = () => {
+            calendarContainer.innerHTML = '';
+
+            const month = date.getMonth();
+            const year = date.getFullYear();
+
+            const header = document.createElement('div');
+            header.className = 'calendar-nav';
+
+            const prevButton = document.createElement('button');
+            prevButton.className = 'btn btn-sm btn-secondary';
+            prevButton.innerText = '◀';
+            prevButton.onclick = () => {
+                date.setMonth(date.getMonth() - 1);
+                renderCalendar();
+            };
+
+            const nextButton = document.createElement('button');
+            nextButton.className = 'btn btn-sm btn-secondary';
+            nextButton.innerText = '▶';
+            nextButton.onclick = () => {
+                date.setMonth(date.getMonth() + 1);
+                renderCalendar();
+            };
+
+            const monthYearLabel = document.createElement('span');
+            monthYearLabel.className = 'month-year-label';
+            monthYearLabel.innerText = `${date.toLocaleString('default', { month: 'long' })} ${year}`;
+
+            header.appendChild(prevButton);
+            header.appendChild(monthYearLabel);
+            header.appendChild(nextButton);
+            calendarContainer.appendChild(header);
+
+            const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            daysOfWeek.forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'calendar-header';
+                header.innerText = day;
+                calendarContainer.appendChild(header);
+            });
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const lastDay = new Date(year, month + 1, 0).getDate();
+
+            for (let i = 0; i < firstDay; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'calendar-day';
+                calendarContainer.appendChild(emptyCell);
+            }
+
+            for (let day = 1; day <= lastDay; day++) {
+                const dayCell = document.createElement('div');
+                dayCell.className = 'calendar-day selectable';
+                dayCell.innerText = day;
+
+                const currentDate = new Date(year, month, day);
+                if (selectedDate && currentDate.toDateString() === selectedDate.toDateString()) {
+                    dayCell.classList.add('selected');
+                }
+
+                dayCell.addEventListener('click', () => {
+                    selectedDate = new Date(year, month, day);
+                    consultationDateInput.value = selectedDate.toISOString().slice(0, 10) + 'T00:00:00';
+                    selectedDateLabel.innerText = `Selected Date: ${selectedDate.toLocaleDateString()}`;
+                    renderCalendar();
+                });
+
+                calendarContainer.appendChild(dayCell);
+            }
+        };
+
+        renderCalendar();
+    });
+</script>
+
+<style>
+    .calendar-container {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 5px;
+        margin-top: 20px;
+    }
+    .calendar-nav {
+        grid-column: span 7;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .calendar-header, .calendar-day {
+        padding: 10px;
+        background-color: #f1f1f1;
+        border: 1px solid #ddd;
+        text-align: center;
+    }
+    .calendar-day.selectable:hover {
+        background-color: #d1e7dd;
+        cursor: pointer;
+    }
+    .calendar-day.selected {
+        background-color: #0d6efd;
+        color: white;
+    }
+</style>
+
 {% endblock %}
+
+{% block FunFact %}{% endblock %}

@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'front/base.html.twig' %}
 
 {% block title %}Mes Consultations{% endblock %}
 
@@ -37,6 +37,7 @@
                     <th>Créé le</th>
                     <th>Statut</th>
                     <th>Actions</th>
+                    
                 </tr>
             </thead>
             <tbody>
@@ -52,9 +53,11 @@
                         </td>
                         <td>
     <a href="{{ path('consultation_edit', {'id': consultation.id}) }}" class="btn btn-warning">Modifier</a>
+    <a href="/add_consultation" class="btn btn-warning">Rendez-vous</a>
     <form action="{{ path('consultation_delete', {'id': consultation.id}) }}" method="post" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette consultation ?');">
         <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ consultation.id) }}">
         <button type="submit" class="btn btn-danger">Supprimer</button>
+        
     </form>
           
                         </td>
@@ -65,3 +68,5 @@
     {% endif %}
 </div>
 {% endblock %}
+{%block FunFact%}
+{%endblock%}

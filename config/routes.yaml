@@ -1,9 +1,5 @@
 controllers:
-    resource: ../src/Controller/
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
     type: attribute
-
-# Custom routes
-consultation_index:
-    path: /consultation
-    controller: App\Controller\ConsultationController::index
-

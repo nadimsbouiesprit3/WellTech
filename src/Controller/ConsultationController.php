@@ -16,10 +16,10 @@ use Symfony\Component\HttpFoundation\Request;
 class ConsultationController extends AbstractController
 {
     #[Route('/consultation', name: 'index_consultation')]
-    public function index(): Response
+    public function index(EntityManagerInterface $entityManager): Response
     {
         $user = $this->getUser();
-        $consultations = $user->getConsultations();
+        $consultations = $entityManager->getRepository(Consultation::class)->findBy(['patient' => $user]);
 
         return $this->render('consultation/index.html.twig', [
             'consultations' => $consultations,
@@ -32,27 +32,30 @@ class ConsultationController extends AbstractController
     {
         $consultation = new Consultation();
         $form = $this->createForm(ConsultationType::class, $consultation);
-    
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
+    
+        if ($form->isSubmitted()) {
             $consultation->setPatient($this->getUser()); 
-            $consultation->setCreatedAt(new \DateTime()); 
-
-            if (!$consultation->getConsultationDate()) {
+            $consultation->setCreatedAt(new \DateTime());
+    
+            $consultationDate = $request->request->get('consultationDate');
+            if (!$consultationDate) {
                 throw new \Exception('La date de consultation ne peut pas être vide.');
             }
+    
+            $consultation->setConsultationDate(new \DateTime($consultationDate));
     
             $entityManager->persist($consultation);
             $entityManager->flush();
     
-            return $this->redirectToRoute('consultation_index');
+            return $this->redirectToRoute('index_consultation');
         }
     
         return $this->render('consultation/new.html.twig', [
             'form' => $form->createView(),
         ]);
-
     }
+    
 
     #[Route('/psychiatrist/consultations', name: 'psychiatrist_consultations')]
     public function viewPendingConsultations(EntityManagerInterface $entityManager, ConsultationRepository $consultationRepository): Response
@@ -182,7 +185,7 @@ public function editConsultation(int $id, Request $request, EntityManagerInterfa
 
     $form->handleRequest($request);
 
-    if ($form->isSubmitted() && $form->isValid()) {
+    if ($form->isSubmitted() ) {
         $entityManager->flush();
         $this->addFlash('success', 'Consultation updated successfully.');
 

@@ -11,6 +11,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType; 
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 
 class ConsultationType extends AbstractType
@@ -25,16 +26,6 @@ class ConsultationType extends AbstractType
                     return $userRepository->getUsersByRoleQueryBuilder('ROLE_PSYCHIATRE');
                 },
             ])
-            ->add('consultationDate', DateTimeType::class, [
-                'label' => 'Consultation Date and Time',
-                'widget' => 'single_text',
-                'html5' => true, 
-                'required' => true,
-                'attr' => [
-                    'class' => 'form-control', 
-                    'min' => (new \DateTime())->format('Y-m-d\TH:i'), 
-                ],
-            ])            
             ->add('message', TextareaType::class, [
                 'label' => 'Message to the Psychiatrist',
                 'required' => true,
